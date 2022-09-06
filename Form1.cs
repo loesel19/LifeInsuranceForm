@@ -3,6 +3,7 @@ namespace LifeInsuranceForm
     public partial class Form1 : Form
     {
         private bool blnAllGood = true; //this field is a flag that will be used at certain points in program executation to help maintain the flow of the program.
+        const double dblTaxPercent = 0.06; //the sales tax of whatever state this is program is being used in. 
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +30,8 @@ namespace LifeInsuranceForm
             }
             //the user hit yes, so lets first clear all the textboxes. We have a method for this.
             clearTextboxes();
+            resetLabels();
+            resetMiscControls();
         }
         private void clearTextboxes()
         {
@@ -74,6 +77,19 @@ namespace LifeInsuranceForm
              *           textboxes or labels to whatever state we want them to be in when the form first loads.
              *           */
             lstMessage.Items.Clear(); //clear our listbox that is used to give messages to the user. 
+        }
+        private double calculateSalesTax(double dblSubTotal)
+        {
+            /**
+             * Name : calculateSalesTax
+             * Params : dblSubTotal - the pre-tax amount of the transaction that we wish to calculate the total sales tax for.
+             * Returns : dblTax - the amount of tax we calculate for our transaction.
+             * Purpose : The purpose of this function is to calculate and return the sales tax amount for a given transaction
+             *           subtotal.
+             *           */
+            double dblTax = 0;
+            dblTax = dblSubTotal * dblTaxPercent;
+            return dblTax;
         }
 
         private double calculateRiskFactor(int intAge, double dblWeight, double dblHeight)
@@ -141,9 +157,7 @@ namespace LifeInsuranceForm
              *           of higher level logic in the onclick function for our submit button.
              *           */
             //reset the labels, textboxes and other controls so that the previous output will be cleared if the user did not hit the clear button before typing in new client information
-            clearTextboxes();
             resetLabels();
-            resetMiscControls();
             //we need to get the risk factor before calculating the coverage amount.
             double dblRiskFactor = calculateRiskFactor(intAge, dblWeight, dblHeight); //the risk factor calculated with the clients information
             //show the original risk factor to the user
@@ -208,7 +222,13 @@ namespace LifeInsuranceForm
             }
             //lets get the annual cost
             double dblCoverageAmount = calculateCoverageAmount(int.Parse(txtAge.Text), double.Parse(txtWeight.Text), double.Parse(txtHeight.Text), double.Parse(txtCoverageAmount.Text));
-            lblSub.Text += "$" + dblCoverageAmount; 
+            lblSub.Text += "$" + dblCoverageAmount;
+            //now lets get the tax
+            double dblTax = calculateSalesTax(dblCoverageAmount);
+            lblTax.Text += "$" + dblTax;
+            //and do total cost (subtotal + tax)
+            double dblTotal = dblCoverageAmount + dblTax;
+            lblTotal.Text += "$" + dblTotal;
         }
     }
 }
