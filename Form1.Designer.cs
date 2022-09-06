@@ -50,13 +50,14 @@
             this.rdoFlatRate = new System.Windows.Forms.RadioButton();
             this.rdoPercentage = new System.Windows.Forms.RadioButton();
             this.gboPolicy = new System.Windows.Forms.GroupBox();
+            this.lblDiscount = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.lblSub = new System.Windows.Forms.Label();
             this.lblRisk = new System.Windows.Forms.Label();
             this.btnSubmit = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
-            this.lblDiscount = new System.Windows.Forms.Label();
+            this.lstMessage = new System.Windows.Forms.ListBox();
             this.gboInformation.SuspendLayout();
             this.gboDiscount.SuspendLayout();
             this.gboPolicy.SuspendLayout();
@@ -275,6 +276,15 @@
             this.gboPolicy.TabStop = false;
             this.gboPolicy.Text = "Policy Information";
             // 
+            // lblDiscount
+            // 
+            this.lblDiscount.AutoSize = true;
+            this.lblDiscount.Location = new System.Drawing.Point(13, 73);
+            this.lblDiscount.Name = "lblDiscount";
+            this.lblDiscount.Size = new System.Drawing.Size(63, 15);
+            this.lblDiscount.TabIndex = 4;
+            this.lblDiscount.Text = "Discount : ";
+            // 
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
@@ -319,6 +329,7 @@
             this.btnSubmit.TabIndex = 9;
             this.btnSubmit.Text = "Get Policy";
             this.btnSubmit.UseVisualStyleBackColor = true;
+            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_click);
             // 
             // btnClear
             // 
@@ -330,20 +341,21 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
-            // lblDiscount
+            // lstMessage
             // 
-            this.lblDiscount.AutoSize = true;
-            this.lblDiscount.Location = new System.Drawing.Point(13, 73);
-            this.lblDiscount.Name = "lblDiscount";
-            this.lblDiscount.Size = new System.Drawing.Size(63, 15);
-            this.lblDiscount.TabIndex = 4;
-            this.lblDiscount.Text = "Discount : ";
+            this.lstMessage.FormattingEnabled = true;
+            this.lstMessage.ItemHeight = 15;
+            this.lstMessage.Location = new System.Drawing.Point(297, 300);
+            this.lstMessage.Name = "lstMessage";
+            this.lstMessage.Size = new System.Drawing.Size(236, 124);
+            this.lstMessage.TabIndex = 11;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(564, 441);
+            this.Controls.Add(this.lstMessage);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSubmit);
             this.Controls.Add(this.gboPolicy);
@@ -392,5 +404,6 @@
         private Button btnClear;
         private RadioButton rdoNone;
         private Label lblDiscount;
+        private ListBox lstMessage;
     }
 }
