@@ -52,7 +52,7 @@
             this.gboPolicy = new System.Windows.Forms.GroupBox();
             this.lblDiscount = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this.lblTax = new System.Windows.Forms.Label();
             this.lblSub = new System.Windows.Forms.Label();
             this.lblRisk = new System.Windows.Forms.Label();
             this.btnSubmit = new System.Windows.Forms.Button();
@@ -266,7 +266,7 @@
             // 
             this.gboPolicy.Controls.Add(this.lblDiscount);
             this.gboPolicy.Controls.Add(this.lblTotal);
-            this.gboPolicy.Controls.Add(this.label10);
+            this.gboPolicy.Controls.Add(this.lblTax);
             this.gboPolicy.Controls.Add(this.lblSub);
             this.gboPolicy.Controls.Add(this.lblRisk);
             this.gboPolicy.Location = new System.Drawing.Point(12, 288);
@@ -294,14 +294,14 @@
             this.lblTotal.TabIndex = 3;
             this.lblTotal.Text = "Total : ";
             // 
-            // label10
+            // lblTax
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(11, 88);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(65, 15);
-            this.label10.TabIndex = 2;
-            this.label10.Text = "Tax (0.06) : ";
+            this.lblTax.AutoSize = true;
+            this.lblTax.Location = new System.Drawing.Point(11, 88);
+            this.lblTax.Name = "lblTax";
+            this.lblTax.Size = new System.Drawing.Size(65, 15);
+            this.lblTax.TabIndex = 2;
+            this.lblTax.Text = "Tax (0.06) : ";
             // 
             // lblSub
             // 
@@ -397,7 +397,7 @@
         private RadioButton rdoPercentage;
         private GroupBox gboPolicy;
         private Label lblTotal;
-        private Label label10;
+        private Label lblTax;
         private Label lblSub;
         private Label lblRisk;
         private Button btnSubmit;

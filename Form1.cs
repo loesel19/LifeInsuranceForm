@@ -57,7 +57,11 @@ namespace LifeInsuranceForm
              * Returns : None.
              * Purpose : The purpose of this method is to reset all labels to whatever they said when the form is first loaded.
              *           */
-            lstMessage.Items.Clear(); //clear our listbox that is used to give messages to the user. 
+            lblRisk.Text = "Risk Factor: "; //reset label for risk factor text
+            lblSub.Text = "Sub Total: "; //reset subtotal label text
+            lblDiscount.Text = "Discount: "; //reset discount label text
+            lblTax.Text = "Tax (0.06): "; //reset tax label text
+            lblTotal.Text = "Total: "; //reset total label text
         }
 
         private void resetMiscControls()
@@ -69,6 +73,7 @@ namespace LifeInsuranceForm
              * Purpose : The purpose of this method is to be an area to handle reseting any controls that are not
              *           textboxes or labels to whatever state we want them to be in when the form first loads.
              *           */
+            lstMessage.Items.Clear(); //clear our listbox that is used to give messages to the user. 
         }
 
         private double calculateRiskFactor(int intAge, double dblWeight, double dblHeight)
@@ -135,17 +140,21 @@ namespace LifeInsuranceForm
              *           data caused our risk factor equation to make no sense. In this function we do not need to care if anything is all good, we will take care
              *           of higher level logic in the onclick function for our submit button.
              *           */
-            //we first need to get the risk factor.
+            //reset the labels, textboxes and other controls so that the previous output will be cleared if the user did not hit the clear button before typing in new client information
+            clearTextboxes();
+            resetLabels();
+            resetMiscControls();
+            //we need to get the risk factor before calculating the coverage amount.
             double dblRiskFactor = calculateRiskFactor(intAge, dblWeight, dblHeight); //the risk factor calculated with the clients information
             //show the original risk factor to the user
             lblRisk.Text += " " + dblRiskFactor.ToString();
-
+            double dblAnnualCost = 0;
             //now there are four different conditionals that determine how the annual cost is calculated.
             //risk factor 0.0 to 10.0
             if(dblRiskFactor >= 0 && dblRiskFactor <= 10)
             {
                 //our equation is (10.1 - risk factor) * 1/10 * coverage amount
-                return ((10.1 - dblRiskFactor) * (1 / 10) * dblCoverageAmount);
+                dblAnnualCost = (10.1 - dblRiskFactor) * (1.0/10.0) * dblCoverageAmount;
             }
             if(dblRiskFactor > 10)
             {
@@ -154,12 +163,12 @@ namespace LifeInsuranceForm
                 {
                     dblRiskFactor = dblRiskFactor / 10;
                 }
-                return ((10.1 - dblRiskFactor) * (1 / 10) * dblCoverageAmount);
+                dblAnnualCost = ((10.1 - dblRiskFactor) * (1.0/10.0) * dblCoverageAmount);
             }
             if(dblRiskFactor < 0 && dblRiskFactor >= -10)
             {
                 //our equation is (10.1 + risk factor) * 1/10 * coverage amount
-                return ((10.1 + dblRiskFactor) * (1 / 10) * dblCoverageAmount);
+                dblAnnualCost = ((10.1 + dblRiskFactor) * (1.0/10.0) * dblCoverageAmount);
             }
             if(dblRiskFactor < -10)
             {
@@ -168,12 +177,10 @@ namespace LifeInsuranceForm
                 {
                     dblRiskFactor = dblRiskFactor / 10;
                 }
-                return ((10.1 + dblRiskFactor) * (1 / 10) * dblCoverageAmount);
+                dblAnnualCost = ((10.1 + dblRiskFactor) * (1.0/10.0) * dblCoverageAmount);
             }
-            //this line will, hopefully, never be executed, but it is necessary for our method to be syntactically corrent, since I try not to use else blocks
-            blnAllGood = false; //if we do make here something is not good.
-            lstMessage.Items.Add("An error was encountered during coverage calculation.");
-            return 0;
+            
+            return dblAnnualCost;
         }
         public bool validateInputs()
         {
