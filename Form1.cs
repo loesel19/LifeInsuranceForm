@@ -102,6 +102,14 @@ namespace LifeInsuranceForm
              *           textboxes or labels to whatever state we want them to be in when the form first loads.
              *           */
             lstMessage.Items.Clear(); //clear our listbox that is used to give messages to the user. 
+            //lets deal with the radio group as well.
+            //clear txtAmount and disable it
+            txtAmount.Clear();
+            txtAmount.Enabled = false;
+            //unselect all radio buttons
+            rdoFlatRate.Checked = false;
+            rdoPercentage.Checked = false;
+            rdoNone.Checked = false;
         }
         private double calculateSalesTax(double dblSubTotal)
         {
