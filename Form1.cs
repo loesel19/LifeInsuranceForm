@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace LifeInsuranceForm
 {
     public partial class Form1 : Form
@@ -60,11 +62,12 @@ namespace LifeInsuranceForm
              * Returns : None.
              * Purpose : The purpose of this method is to reset all labels to whatever they said when the form is first loaded.
              *           */
-            lblRisk.Text = "Risk Factor: "; //reset label for risk factor text
-            lblSub.Text = "Sub Total: "; //reset subtotal label text
-            lblDiscount.Text = "Discount: "; //reset discount label text
-            lblTax.Text = "Tax (0.06): "; //reset tax label text
-            lblTotal.Text = "Total: "; //reset total label text
+            lblRisk.Text = "Risk Factor : "; //reset label for risk factor text
+            lblCostPerK.Text = "Cost per $1000 : "; //reset label for cost per 1000 dollar
+            lblSub.Text = "Sub Total : "; //reset subtotal label text
+            lblDiscount.Text = "Discount : "; //reset discount label text
+            lblTax.Text = "Tax (" + dblTaxPercent + ") : "; //reset tax label text, using the tax percent constant
+            lblTotal.Text = "Total : "; //reset total label text
         }
 
         private void resetMiscControls()
@@ -92,7 +95,7 @@ namespace LifeInsuranceForm
             return dblTax;
         }
 
-        private double calculateRiskFactor(int intAge, double dblWeight, double dblHeight)
+        private double calculateRiskFactor(double dblAge, double dblWeight, double dblHeight)
         {
             /**
              * Name : calculateRiskFactor
@@ -109,7 +112,7 @@ namespace LifeInsuranceForm
             double dblRadicand = 0; //the value under the square root symbol.
 
             //first lets evaluate the radicand
-            dblRadicand = (dblHeight * dblHeight) + (intAge * dblWeight);
+            dblRadicand = (dblHeight * dblHeight) + (dblAge * dblWeight);
             /* with realistic numbers this equation will never spit out a value <= 0, but it only takes a few lines of
                code to check for this case, so lets make sure we are only taking the sqrt of positive numbers. */
             if(dblRadicand < 0)
@@ -123,8 +126,8 @@ namespace LifeInsuranceForm
                 //just return 0 here
                 return 0;
             }
-            dblNumerator = intAge + Math.Sqrt(dblRadicand);
-            dblDenominator = dblWeight - (4.01 * intAge);
+            dblNumerator = dblAge + Math.Sqrt(dblRadicand);
+            dblDenominator = dblWeight - (4.01 * dblAge);
             if(dblDenominator == 0)
             {
                 /* we can not divide by 0, so much like what we did in the radicand conditional block we should inform the user, set the flag and return 0
@@ -141,7 +144,7 @@ namespace LifeInsuranceForm
             return dblRiskFactor;
         }
 
-        private double calculateCoverageAmount(int intAge, double dblWeight, double dblHeight, double dblCoverageAmount)
+        private double calculateCoverageAmount(double dblAge, double dblWeight, double dblHeight, double dblCoverageAmount)
         {
             /**
              * Name: calculateCoverageAmount
@@ -159,17 +162,28 @@ namespace LifeInsuranceForm
             //reset the labels, textboxes and other controls so that the previous output will be cleared if the user did not hit the clear button before typing in new client information
             resetLabels();
             //we need to get the risk factor before calculating the coverage amount.
-            double dblRiskFactor = calculateRiskFactor(intAge, dblWeight, dblHeight); //the risk factor calculated with the clients information
+            double dblRiskFactor = calculateRiskFactor(dblAge, dblWeight, dblHeight); //the risk factor calculated with the clients information
             //show the original risk factor to the user
-            lblRisk.Text += " " + dblRiskFactor.ToString();
-            double dblAnnualCost = 0;
+            lblRisk.Text += " " + Math.Round(dblRiskFactor, 2);
+            //show user whether client is a safe or unsafe insuree
+            if(dblRiskFactor > 0)
+            {
+                lblRisk.Text += "   Safe";
+            }
+            if(dblRiskFactor <= 0)
+            {
+                lblRisk.Text += "   Unsafe";
+            }
+            double dblAnnualCost = 0; //the annual cost we will calculate with the coverage amount specified
+            double dblCostRatio = 0; //the cost per dollar of coverage
             //now there are four different conditionals that determine how the annual cost is calculated.
             //risk factor 0.0 to 10.0
             if(dblRiskFactor >= 0 && dblRiskFactor <= 10)
             {
                 //our equation is (10.1 - risk factor) * 1/10 * coverage amount
-                dblAnnualCost = (10.1 - dblRiskFactor) * (1.0/10.0) * dblCoverageAmount;
+                dblCostRatio = (10.1 - dblRiskFactor) * (1.0 / 10.0);
             }
+            //risk factor > 10
             if(dblRiskFactor > 10)
             {
                 //our equation is while(risk factor > 10){risk factor =/ 10} then do the same equation as the 0 to 10 range risk factor
@@ -177,13 +191,15 @@ namespace LifeInsuranceForm
                 {
                     dblRiskFactor = dblRiskFactor / 10;
                 }
-                dblAnnualCost = ((10.1 - dblRiskFactor) * (1.0/10.0) * dblCoverageAmount);
+                dblCostRatio = (10.1 - dblRiskFactor) * (1.0/10.0);
             }
+            //0 > risk factor >= -10
             if(dblRiskFactor < 0 && dblRiskFactor >= -10)
             {
                 //our equation is (10.1 + risk factor) * 1/10 * coverage amount
-                dblAnnualCost = ((10.1 + dblRiskFactor) * (1.0/10.0) * dblCoverageAmount);
+                dblCostRatio = (10.1 + dblRiskFactor) * (1.0/10.0);
             }
+            //risk factor < -10
             if(dblRiskFactor < -10)
             {
                 //again we loop until the risk factor is in the range of 0 > risk factor > -10 and then use the equation that we used for that range.
@@ -191,14 +207,162 @@ namespace LifeInsuranceForm
                 {
                     dblRiskFactor = dblRiskFactor / 10;
                 }
-                dblAnnualCost = ((10.1 + dblRiskFactor) * (1.0/10.0) * dblCoverageAmount);
+                dblCostRatio = (10.1 + dblRiskFactor) * (1.0 / 10.0);
             }
-            
+            lblCostPerK.Text = "Cost per $1000 : $" + Math.Round(dblCostRatio * 1000, 2);
+            dblAnnualCost = dblCostRatio * dblCoverageAmount;
             return dblAnnualCost;
+        }
+        public bool onlyLetters(string strInput)
+        {
+            /**
+             * Name: onlyLetters
+             * Params : strInput - could be any string
+             * Returns : boolean - true : this string only contains letters. False : there are more than just letters.
+             * Purpose : the purpose of this function is to take in a string and check if it contains just letters ->
+             *           return true. otherwise return false. This will be used when validating input, specifically
+             *           the name input fields. We check the string using regex.
+             *           */
+            if(Regex.IsMatch(txtFirst.Text, @"^[a-zA-Z]+$"))
+            {
+                return true;
+            }
+            return false;
         }
         public bool validateInputs()
         {
-            return true;
+            /**
+             * Name : validateInputs
+             * Params : None.
+             * Returns : a boolean where true -> inputs were valid, false -> invalid inputs
+             * Purpose : the purpose of this function is to ensure that the user input all required fields, and ensure
+             *           that there are no 'fudged inputs' like an age of -22. All invalid inputs will be mentioned
+             *           in lstMessage.
+             *           */
+            bool blnValid = true;
+            //check the name fields lengths
+            if(txtFirst.Text.Length < 1)
+            {
+                lstMessage.Items.Add("Please enter first name.");
+                blnValid = false;
+            }
+            if(txtMI.Text.Length != 1)
+            {
+                lstMessage.Items.Add("Only input middle initial in M.I.");
+                blnValid = false;
+            }
+            if(txtLast.Text.Length < 1)
+            {
+                lstMessage.Items.Add("Please enter last name.");
+                blnValid = false;
+            }
+            //now check that all name fields only contain letters
+            if(!onlyLetters(txtFirst.Text) || !onlyLetters(txtMI.Text) || !onlyLetters(txtLast.Text))
+            {
+                lstMessage.Items.Add("Name text fields can only contain letters.");
+                blnValid = false;
+            }
+            //now lets do age, height, weight and total coverage amount. Make sure they are only numbers, and only positive.
+            double dblParsedVal = 0; //this will be the value of whichever text field we parse if it can parse
+            bool blnParse = true; //this will let us know if the text was parseable to a double.
+            //now we will tryParse our numeric values 1 by 1.
+            blnParse = double.TryParse(txtAge.Text, out dblParsedVal);
+            if (!blnParse || dblParsedVal < 0)
+            {
+                lstMessage.Items.Add("Age must be a positive number.");
+                blnValid = false;
+            }
+            blnParse = double.TryParse(txtHeight.Text, out dblParsedVal);
+            if(!blnParse || dblParsedVal < 0)
+            {
+                lstMessage.Items.Add("Height must be a positive number.");
+                blnValid = false;
+            }
+            blnParse = double.TryParse(txtWeight.Text, out dblParsedVal);
+            if(!blnParse || dblParsedVal < 0)
+            {
+                lstMessage.Items.Add("Weight must be a positive number.");
+                blnValid = false;
+            }
+            blnParse = double.TryParse(txtCoverageAmount.Text, out dblParsedVal);
+            if(!blnParse || dblParsedVal < 0)
+            {
+                lstMessage.Items.Add("Coverage Amount must be a positive number.");
+                blnValid = false;
+            }
+            return blnValid;
+        }
+        public double getDiscount(double dblAmount)
+        {
+            /**
+             * Name : getDiscount
+             * Params : dblAmount - the cost of coverage prior to any discount being applied.
+             * Returns : a double representitive of the cost of coverage after a discount is/isn't applied
+             * Purpose : The purpose of this function is to apply a discount to the sub total cost of the
+             *           insurance policy. There are a few different cases we check for. First we try to parse
+             *           the discount amount. Then we check if the textbox is enabled, because if it is that means
+             *           rdoFlatRate or rdoPercent is selected. If txtAmount is not enabled there is no discount method
+             *           and we just return dblAmount. We then make sure that the length of txtAmount.Text is > 0. if not
+             *           we let the user know they had a discount method selected but didnt put antyhing in. we then make sure
+             *           that whatever they put in was able to be parsed, and that the value of what they entered was positive.
+             *           We can then check if the discount amount is greater than dblAmount and let the user know if so. Lastly we want
+             *           to append the discount amount to lblDiscount, subtract it from dblAmount and return dblAmount.
+             *           */
+            double d = 0.0;
+            bool blnResult = double.TryParse(txtAmount.Text, out d);
+            if (!txtAmount.Enabled)
+            {
+                lblDiscount.Text += " None ";
+                return dblAmount;
+            }
+            if(txtAmount.Text.Length < 1)
+            {
+                MessageBox.Show("Discount was selected, but no value given.");
+                lstMessage.Items.Add("Discount was selected, but no value given.");
+                lblDiscount.Text += " None ";
+                return dblAmount;
+            }
+            if (!blnResult)
+            {
+                MessageBox.Show("Could not parse discount amount.");
+                lstMessage.Items.Add("Please check discount amount. Parse Error.");
+                lblDiscount.Text += " None ";
+                return dblAmount;
+            }
+            if(d < 0)
+            {
+                MessageBox.Show("Negative discount amount not allowed.");
+                lstMessage.Items.Add("Negative discount amount not allowed.");
+                lblDiscount.Text += " None ";
+                return dblAmount;
+            }
+            if (rdoFlatRate.Checked)
+            {
+                //check if the discount amount is greater than the cost.
+                if (double.Parse(txtAmount.Text) > dblAmount)
+                {
+                    MessageBox.Show("Discounting more than 100% of cost.");
+                    lstMessage.Items.Add("Warning! More than 100% of cost discounted.");
+                }
+                //subtract our flat rate from the given subtotal and return that value.
+                lblDiscount.Text += "$" + Math.Round(double.Parse(txtAmount.Text), 2) + " -";
+                return dblAmount - double.Parse(txtAmount.Text);
+            }
+            if (rdoPercentage.Checked)
+            {
+                //check if the discount amount is greater than the cost.
+                if(double.Parse(txtAmount.Text) > 100)
+                {
+                    MessageBox.Show("Discounting more than 100% of cost.");
+                    lstMessage.Items.Add("Warning! More than 100% of cost discounted.");
+                }
+                lblDiscount.Text += "$" + Math.Round((dblAmount * (double.Parse(txtAmount.Text) / 100)), 2) + " -";
+                //return our new amount by multiplying the sub total that was given by 1 - %discount
+                return dblAmount * (1- (double.Parse(txtAmount.Text)/100));
+            }
+            //if we hit this point assume no discount and return the passed in value.
+            lblDiscount.Text += " None ";
+            return dblAmount;
         }
         public void btnSubmit_click(Object sender, EventArgs eventArgs)
         {
@@ -216,19 +380,57 @@ namespace LifeInsuranceForm
             if (!validateInputs())
             {
                 //inform user that we are exiting the calculation method since the inputs were not valid.
-                lstMessage.Items.Add("Calculation canceled...");
+                lstMessage.Items.Add("Invalid inputs. Calculation canceled...");
                 //return so that no other code in this function gets executed
                 return;
             }
             //lets get the annual cost
-            double dblCoverageAmount = calculateCoverageAmount(int.Parse(txtAge.Text), double.Parse(txtWeight.Text), double.Parse(txtHeight.Text), double.Parse(txtCoverageAmount.Text));
-            lblSub.Text += "$" + dblCoverageAmount;
+            double dblCoverageAmount = calculateCoverageAmount(double.Parse(txtAge.Text), double.Parse(txtWeight.Text), double.Parse(txtHeight.Text), double.Parse(txtCoverageAmount.Text));
+            lblSub.Text += "$" + Math.Round(dblCoverageAmount, 2);
+            //see if there is a discount. If no discount selected the coverage amount will remain unchanged.
+            dblCoverageAmount = getDiscount(dblCoverageAmount);
             //now lets get the tax
             double dblTax = calculateSalesTax(dblCoverageAmount);
-            lblTax.Text += "$" + dblTax;
+            lblTax.Text += "$" + Math.Round(dblTax, 2);
             //and do total cost (subtotal + tax)
             double dblTotal = dblCoverageAmount + dblTax;
-            lblTotal.Text += "$" + dblTotal;
+            lblTotal.Text += "$" +  Math.Round(dblTotal, 2);
+        }
+        public void checkChanged(Object sender, EventArgs e)
+        {
+            /**
+             * Name : checkChanged
+             * Params : sender - the object that fired the event
+             *          e - the arguments for the event that was fired
+             * Returns : none.
+             * Purpose : The purpose of this function is to change our discount grouping control accordingly when one of the
+             *           radio buttons in that group fires the checked changed event. First We will cast sender as a radio button
+             *           we will then see which radio button was clicked. For Flat rate we want to add a '$' to the label, for 
+             *           percentage we want to add a '%' to the label and for none we want to make sure the label just says amount. 
+             *           We also make sure to enable txtAmount when we are discounting either a flat rate or percentage, and disable it
+             *           if none is selected. If the radiobutton that sent the event is not checked we do nothing. This case occurs
+             *           when a radiobutton is already selected and then the user selects a differnt button.
+             *           */
+            RadioButton radioButton = (RadioButton)sender;
+            if (!radioButton.Checked)
+            {
+                return;
+            }
+            if (radioButton.Name == "rdoNone")
+            {
+                lblAmount.Text = "Amount";
+                txtAmount.Enabled = false;
+                return;            
+            }
+            if (radioButton.Name == "rdoFlatRate")
+            {
+                lblAmount.Text = "Amount ($)";
+            }
+            if(radioButton.Name == "rdoPercentage")
+            {
+                lblAmount.Text = "Amount (%)";
+            }
+            txtAmount.Enabled = true;
         }
     }
 }

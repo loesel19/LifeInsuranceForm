@@ -46,10 +46,11 @@
             this.gboDiscount = new System.Windows.Forms.GroupBox();
             this.rdoNone = new System.Windows.Forms.RadioButton();
             this.txtAmount = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.lblAmount = new System.Windows.Forms.Label();
             this.rdoFlatRate = new System.Windows.Forms.RadioButton();
             this.rdoPercentage = new System.Windows.Forms.RadioButton();
             this.gboPolicy = new System.Windows.Forms.GroupBox();
+            this.lblCostPerK = new System.Windows.Forms.Label();
             this.lblDiscount = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
             this.lblTax = new System.Windows.Forms.Label();
@@ -202,7 +203,7 @@
             // 
             this.gboDiscount.Controls.Add(this.rdoNone);
             this.gboDiscount.Controls.Add(this.txtAmount);
-            this.gboDiscount.Controls.Add(this.label8);
+            this.gboDiscount.Controls.Add(this.lblAmount);
             this.gboDiscount.Controls.Add(this.rdoFlatRate);
             this.gboDiscount.Controls.Add(this.rdoPercentage);
             this.gboDiscount.Location = new System.Drawing.Point(12, 199);
@@ -222,23 +223,24 @@
             this.rdoNone.TabStop = true;
             this.rdoNone.Text = "None";
             this.rdoNone.UseVisualStyleBackColor = true;
+            this.rdoNone.CheckedChanged += new System.EventHandler(this.checkChanged);
             // 
             // txtAmount
             // 
             this.txtAmount.Enabled = false;
-            this.txtAmount.Location = new System.Drawing.Point(157, 21);
+            this.txtAmount.Location = new System.Drawing.Point(174, 21);
             this.txtAmount.Name = "txtAmount";
-            this.txtAmount.Size = new System.Drawing.Size(100, 23);
+            this.txtAmount.Size = new System.Drawing.Size(83, 23);
             this.txtAmount.TabIndex = 11;
             // 
-            // label8
+            // lblAmount
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(100, 24);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(51, 15);
-            this.label8.TabIndex = 10;
-            this.label8.Text = "Amount";
+            this.lblAmount.AutoSize = true;
+            this.lblAmount.Location = new System.Drawing.Point(100, 24);
+            this.lblAmount.Name = "lblAmount";
+            this.lblAmount.Size = new System.Drawing.Size(51, 15);
+            this.lblAmount.TabIndex = 10;
+            this.lblAmount.Text = "Amount";
             // 
             // rdoFlatRate
             // 
@@ -250,6 +252,7 @@
             this.rdoFlatRate.TabStop = true;
             this.rdoFlatRate.Text = "Flat Rate";
             this.rdoFlatRate.UseVisualStyleBackColor = true;
+            this.rdoFlatRate.CheckedChanged += new System.EventHandler(this.checkChanged);
             // 
             // rdoPercentage
             // 
@@ -261,9 +264,11 @@
             this.rdoPercentage.TabStop = true;
             this.rdoPercentage.Text = "Percentage";
             this.rdoPercentage.UseVisualStyleBackColor = true;
+            this.rdoPercentage.CheckedChanged += new System.EventHandler(this.checkChanged);
             // 
             // gboPolicy
             // 
+            this.gboPolicy.Controls.Add(this.lblCostPerK);
             this.gboPolicy.Controls.Add(this.lblDiscount);
             this.gboPolicy.Controls.Add(this.lblTotal);
             this.gboPolicy.Controls.Add(this.lblTax);
@@ -276,10 +281,19 @@
             this.gboPolicy.TabStop = false;
             this.gboPolicy.Text = "Policy Information";
             // 
+            // lblCostPerK
+            // 
+            this.lblCostPerK.AutoSize = true;
+            this.lblCostPerK.Location = new System.Drawing.Point(0, 34);
+            this.lblCostPerK.Name = "lblCostPerK";
+            this.lblCostPerK.Size = new System.Drawing.Size(93, 15);
+            this.lblCostPerK.TabIndex = 5;
+            this.lblCostPerK.Text = "Cost per $1000 : ";
+            // 
             // lblDiscount
             // 
             this.lblDiscount.AutoSize = true;
-            this.lblDiscount.Location = new System.Drawing.Point(13, 73);
+            this.lblDiscount.Location = new System.Drawing.Point(30, 85);
             this.lblDiscount.Name = "lblDiscount";
             this.lblDiscount.Size = new System.Drawing.Size(63, 15);
             this.lblDiscount.TabIndex = 4;
@@ -288,7 +302,7 @@
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(35, 103);
+            this.lblTotal.Location = new System.Drawing.Point(52, 115);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(41, 15);
             this.lblTotal.TabIndex = 3;
@@ -297,7 +311,7 @@
             // lblTax
             // 
             this.lblTax.AutoSize = true;
-            this.lblTax.Location = new System.Drawing.Point(11, 88);
+            this.lblTax.Location = new System.Drawing.Point(28, 100);
             this.lblTax.Name = "lblTax";
             this.lblTax.Size = new System.Drawing.Size(65, 15);
             this.lblTax.TabIndex = 2;
@@ -306,7 +320,7 @@
             // lblSub
             // 
             this.lblSub.AutoSize = true;
-            this.lblSub.Location = new System.Drawing.Point(11, 58);
+            this.lblSub.Location = new System.Drawing.Point(28, 70);
             this.lblSub.Name = "lblSub";
             this.lblSub.Size = new System.Drawing.Size(61, 15);
             this.lblSub.TabIndex = 1;
@@ -315,7 +329,7 @@
             // lblRisk
             // 
             this.lblRisk.AutoSize = true;
-            this.lblRisk.Location = new System.Drawing.Point(6, 19);
+            this.lblRisk.Location = new System.Drawing.Point(20, 19);
             this.lblRisk.Name = "lblRisk";
             this.lblRisk.Size = new System.Drawing.Size(73, 15);
             this.lblRisk.TabIndex = 0;
@@ -325,7 +339,7 @@
             // 
             this.btnSubmit.Location = new System.Drawing.Point(297, 206);
             this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(236, 34);
+            this.btnSubmit.Size = new System.Drawing.Size(257, 34);
             this.btnSubmit.TabIndex = 9;
             this.btnSubmit.Text = "Get Policy";
             this.btnSubmit.UseVisualStyleBackColor = true;
@@ -335,7 +349,7 @@
             // 
             this.btnClear.Location = new System.Drawing.Point(297, 246);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(236, 34);
+            this.btnClear.Size = new System.Drawing.Size(257, 34);
             this.btnClear.TabIndex = 10;
             this.btnClear.Text = "Clear Form";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -347,7 +361,7 @@
             this.lstMessage.ItemHeight = 15;
             this.lstMessage.Location = new System.Drawing.Point(297, 300);
             this.lstMessage.Name = "lstMessage";
-            this.lstMessage.Size = new System.Drawing.Size(236, 124);
+            this.lstMessage.Size = new System.Drawing.Size(257, 124);
             this.lstMessage.TabIndex = 11;
             // 
             // Form1
@@ -392,7 +406,7 @@
         private TextBox txtAge;
         private GroupBox gboDiscount;
         private TextBox txtAmount;
-        private Label label8;
+        private Label lblAmount;
         private RadioButton rdoFlatRate;
         private RadioButton rdoPercentage;
         private GroupBox gboPolicy;
@@ -405,5 +419,6 @@
         private RadioButton rdoNone;
         private Label lblDiscount;
         private ListBox lstMessage;
+        private Label lblCostPerK;
     }
 }
