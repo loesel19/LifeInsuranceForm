@@ -100,6 +100,9 @@ namespace LifeInsuranceForm
              * Returns : None.
              * Purpose : The purpose of this method is to be an area to handle reseting any controls that are not
              *           textboxes or labels to whatever state we want them to be in when the form first loads.
+             *           - Clear lstMessage (what acts as our message queue to the user)
+             *           - disable and clear txtAmount (in the discount control group)
+             *           - unselect all radio buttons in the discount control group
              *           */
             lstMessage.Items.Clear(); //clear our listbox that is used to give messages to the user. 
             //lets deal with the radio group as well.
