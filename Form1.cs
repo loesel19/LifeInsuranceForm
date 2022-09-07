@@ -2,12 +2,34 @@ using System.Text.RegularExpressions;
 
 namespace LifeInsuranceForm
 {
+    /**
+     * Project Name : LifeInsuranceForm
+     * Project Purpose : The purpose of this project is to provide a windows forms application for the Charge Em Life
+     *                   Insurance company. 
+     *                   */
     public partial class Form1 : Form
     {
+        /**
+         * Class Name : Form1
+         * Class Purpose : This class extends Form. This form is to be used by a Charge Em Life Insurance agent when they are 
+         *                 meeting with a potential client. The agent will input certain information about a client : age, height,
+         *                 weight, name, and total insurance policy coverage. The form will then validate data and run the numbers
+         *                 through Charge Em's Risk Factor assessment. Lastly the total price of the policy will be shown to the agent.
+         *                 The agent will be able to apply a discount if they choose as well. Beyond this the form is able to be cleared for
+         *                 when the next client stops in.
+         *                 This is the only file in the project so far.
+         *                */
         private bool blnAllGood = true; //this field is a flag that will be used at certain points in program executation to help maintain the flow of the program.
         const double dblTaxPercent = 0.06; //the sales tax of whatever state this is program is being used in. 
         public Form1()
         {
+            /**
+             * Name : Form1
+             * Params : None
+             * Returns : None
+             * Purpose : This is a Visual Studio generated default constructor for the Form1 class. This default
+             *           constructor just calls an intialize method on the object to set up our form.
+             *           */
             InitializeComponent();
         }
 
@@ -148,10 +170,10 @@ namespace LifeInsuranceForm
         {
             /**
              * Name: calculateCoverageAmount
-             * Params : dblCoverageAmount - the amount that the clientwould like his/her/their? policy to cover
+             * Params : dblAge - the age of the client.
+             *          dblCoverageAmount - the amount that the clientwould like his/her/their? policy to cover
              *          dblHeight - the height of the client in inches.
              *          dblWeight - the weight of the client in inches.
-             *          intAge - the age of the client.
              * Returns : a double representing the total annual premium policy that the user will pay
              * Purpose : The purpose of this function is to take the client's information, and calculate the total annual
              *           payment based off of this information. The calculation is split into four conditions depending on the value of the risk factor.
