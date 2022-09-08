@@ -5,7 +5,10 @@ namespace LifeInsuranceForm
     /**
      * Project Name : LifeInsuranceForm
      * Project Purpose : The purpose of this project is to provide a windows forms application for the Charge Em Life
-     *                   Insurance company. 
+     *                   Insurance company. This is an assignment for a class and the company (as far as I know) does
+     *                   not exist.
+     * Project Author : Andrew A. Loesel
+     * Organization : This is for Saginaw Valley State University CS 421 taught by Scott James.
      *                   */
     public partial class Form1 : Form
     {
@@ -153,7 +156,9 @@ namespace LifeInsuranceForm
                 /*this situation is a bit hairy. Something happened that should not have, but we can't just return a bogus value since in theory our equation
                  * can spit out any value. Let us first make the user aware that something isn't quite right. Let's also create a 'all good flag' and set it to
                  * false in this conditional block since everything is in fact not all good. Then we can control our program flow from outside of this method. */
+                //this should never be hit since we have a squared value under our radical, and negative inputs aren't allowed, but to be safe we should cover this.
                 MessageBox.Show("Check client information.", "Error");
+                lstMessage.Items.Add("height^2 + (age * weight) is < 0. Somehow");
                 lstMessage.Items.Add("Results may be incorrect. Please check client information and try again.");
                 blnAllGood = false;
                 //just return 0 here
@@ -166,6 +171,7 @@ namespace LifeInsuranceForm
                 /* we can not divide by 0, so much like what we did in the radicand conditional block we should inform the user, set the flag and return 0
                  * */
                 MessageBox.Show("Divide by zero, please check client information.", "Error");
+                lstMessage.Items.Add("Divide by zero, please check client information.");
                 lstMessage.Items.Add("Results may be incorrect. Please check client information and try again.");
                 blnAllGood = false;
                 return 0;
@@ -196,6 +202,13 @@ namespace LifeInsuranceForm
             resetLabels();
             //we need to get the risk factor before calculating the coverage amount.
             double dblRiskFactor = calculateRiskFactor(dblAge, dblWeight, dblHeight); //the risk factor calculated with the clients information
+            //caclulateRiskFactor sets a boolean value to false if anything anomalous happened during calculation 
+            //lets make the user aware that something wasn't right
+            if (!blnAllGood)
+            {
+                MessageBox.Show("Something went wrong in calculation, check listbox (lower right corner) for more details.", "Warning");
+                //***being in this conditional is very rare since the numbers have to be just wrong enough to get us here, but still better safe than sorry.
+            }
             //show the original risk factor to the user
             lblRisk.Text += " " + Math.Round(dblRiskFactor, 2);
             //show user whether client is a safe or unsafe insuree
@@ -241,6 +254,13 @@ namespace LifeInsuranceForm
                     dblRiskFactor = dblRiskFactor / 10;
                 }
                 dblCostRatio = (10.1 + dblRiskFactor) * (1.0 / 10.0);
+            }
+            //see if the cost ratio is greater than 1. if this occurrs the client will have to pay more than the policy covers
+            if(dblCostRatio > 1)
+            {
+                //this can occurr quite frequently with pretty standard numbers so let's just put a message in the listbox
+                lstMessage.Items.Add("Warning. Policy costs more than coverage amt.");
+                lstMessage.Items.Add("Double check client information.");
             }
             lblCostPerK.Text = "Cost per $1000 : $" + Math.Round(dblCostRatio * 1000, 2);
             dblAnnualCost = dblCostRatio * dblCoverageAmount;
